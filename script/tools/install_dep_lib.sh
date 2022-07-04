@@ -1,6 +1,8 @@
 #!/bin/bash
-# exit on errors
+# Exit immediately if a command exits with a non-zero exit status.
 set -e
+# Print commands and their arguments as they are executed.
+set -x
 
 # can set the number of cores to build with, mostly to limit memory usage on CI
 NPROC=${NPROC:-$(nproc)}
@@ -20,7 +22,9 @@ sudo apt-get install -y cmake cmake-curses-gui
 
 sudo apt-get install -y protobuf-compiler libprotobuf-dev libgoogle-glog-dev libgflags-dev
 
-function checkinstall-auto {
+sudo apt-get install -y checkinstall
+
+checkInstallAuto() {
   name=$1
   version=$2
   shift 2
@@ -52,7 +56,7 @@ echo "install [pcl] done"
 #   cd build
 #   cmake ..
 #   make -j $NPROC
-#   checkinstall-auto libg2o-dev 0.0.0
+#   checkInstallAuto libg2o-dev 0.0.0
 # )
 # [ -z "$KEEP" ] && rm -rf g2o
 # echo "install [g2o] done"
@@ -70,7 +74,7 @@ git clone -b 2.0.0 --depth 1 https://github.com/ceres-solver/ceres-solver.git
   cd build
   cmake .. -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
   make -j $NPROC
-  checkinstall-auto libceres-dev 2.0.0
+  checkInstallAuto libceres-dev 2.0.0
 )
 [ -z "$KEEP" ] && rm -rf ceres-solver
 echo "install [ceres] done"
@@ -86,20 +90,20 @@ echo "install [ceres] done"
 #   cd build
 #   cmake ..
 #   make -j $NPROC
-#   checkinstall-auto libgtsam-dev 1.14.0
+#   checkInstallAuto libgtsam-dev 1.14.0
 # )
 # [ -z "$KEEP" ] && rm -rf gtsam
 # echo "install [gtsam] done"
 
 echo "install [sophus]"
-git clone --depth 1 https://github.com/strasdat/Sophus.git
+git clone -b v1.0.0  --depth 1 https://github.com/strasdat/Sophus.git
 (
   cd Sophus
   mkdir build
   cd build
   cmake .. -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF
   make -j $NPROC
-  checkinstall-auto libsophus-dev 0.0.0
+  checkInstallAuto libsophus-dev 0.0.0
 )
 [ -z "$KEEP" ] && rm -rf Sophus
 echo "install [sophus] done"
@@ -115,7 +119,7 @@ git clone --depth 1 https://github.com/libLAS/libLAS.git
   cd build
   cmake .. -DWITH_TESTS=OFF
   make -j $NPROC
-  checkinstall-auto liblas-dev 0.0.0
+  checkInstallAuto liblas-dev 0.0.0
 )
 [ -z "$KEEP" ] && rm -rf libLAS
 echo "install [libLAS] done"
@@ -129,7 +133,7 @@ git clone --depth 1 https://github.com/MIT-SPARK/TEASER-plusplus.git
   cd build
   cmake .. -DBUILD_TESTS=OFF
   make -j $NPROC
-  checkinstall-auto libteaser-dev 0.0.0
+  checkInstallAuto libteaser-dev 0.0.0
   sudo ldconfig
 )
 [ -z "$KEEP" ] && rm -rf TEASER-plusplus
